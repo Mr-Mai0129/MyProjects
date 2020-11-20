@@ -1,0 +1,17 @@
+{
+  "groups": [
+    {
+      "name": "jwt",
+      "type": "com.hr_manage.config.JwtConfigProperties",
+      "sourceType": "com.hr_manage.config.JwtConfigProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "jwt.secret",
+      "type": "java.lang.String",
+      "sourceType": "com.hr_manage.config.JwtConfigProperties"
+    }
+  ],
+  "hints": []
+}

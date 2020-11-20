@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hr_manage.mapper.ISalaryMapper">
+
+    <resultMap id="SalaryResult" type="com.hr_manage.entity.Salary">
+        <id property="id" column="ID"></id>
+        <result property="eid" column="EID"></result>
+        <result property="salary" column="SALARY"></result>
+        <result property="date" column="DATE"></result>
+        <result property="status" column="STATUS"></result>
+        <result property="name" column="NAME"></result>
+    </resultMap>
+
+    <select id="findByCondition" resultMap="SalaryResult">
+        SELECT s.*,e.name FROM salary_table s
+        left OUTER JOIN employee_table e ON s.EID=e.id
+        where 1=1
+        <if test="id != null">and id=#{id}</if>
+        <if test="date != null ">and date=#{date}</if>
+        <if test="eIds != null and eIds.size > 0">and s.EID IN
+            <foreach collection="eIds" item="eid" index="index" open="(" close=")" separator=",">
+                #{eid}
+            </foreach>
+        </if>
+        <if test="startIndex != null">LIMIT #{startIndex},10</if>
+    </select>
+
+    <select id="selectTotalByCondition" resultType="java.lang.Integer">
+        select count(1) from salary_table
+        where 1=1
+        <if test="id != null">and id=#{id}</if>
+        <if test="date != null ">and date=#{date}</if>
+        <if test="eIds != null and eIds.size > 0">and EID IN
+            <foreach collection="eIds" item="eid" index="index" open="(" close=")" separator=",">
+                #{eid}
+            </foreach>
+        </if>
+    </select>
+
+    <insert id="add" parameterType="com.hr_manage.entity.Salary">
+        <selectKey keyProperty="id" keyColumn="id" resultType="java.lang.Integer" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into salary_table(EID,SALARY,DATE,STATUS) values (#{eid},#{salary},#{date},#{status})
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete from  salary_table where ID=#{id}
+    </delete>
+
+    <update id="update" parameterType="com.hr_manage.entity.Salary">
+        update  salary_table set  SALARY=#{salary},DATE=#{date},STATUS=#{status}  where ID=#{id}
+    </update>
+
+</mapper>

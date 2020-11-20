@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hr_manage.mapper.IPostMapper">
+
+    <resultMap id="PostResult" type="com.hr_manage.entity.Post">
+        <id property="id" column="id"></id>
+        <result property="name" column="NAME"></result>
+        <result property="content" column="CONTENT"></result>
+    </resultMap>
+
+    <select id="findByCondition" resultMap="PostResult">
+        select  * from post_table
+        where 1=1
+        <if test="id != null">and id=#{id}</if>
+        <if test="name != null and name != ''">and name=#{name}</if>
+        <if test="startIndex != null">LIMIT #{startIndex},10</if>
+    </select>
+
+    <select id="selectTotalByCondition" resultType="java.lang.Integer">
+        select count(1) from post_table
+        where 1=1
+        <if test="id != null">and id=#{id}</if>
+        <if test="name != null and name != ''">and name=#{name}</if>
+    </select>
+
+    <insert id="add" parameterType="com.hr_manage.entity.Post">
+         <selectKey keyProperty="id" keyColumn="id" resultType="java.lang.Integer" order="AFTER">
+             SELECT LAST_INSERT_ID()
+         </selectKey>
+        insert into post_table(NAME,CONTENT) values (#{name},#{content})
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete  from  post_table where id=#{id}
+    </delete>
+
+    <update id="update" parameterType="com.hr_manage.entity.Post">
+        update post_table set NAME=#{name},CONTENT=#{content}
+        where id=#{id}
+    </update>
+
+
+    <select id="selectTotalByName" parameterType="java.lang.String" resultType="java.lang.Integer">
+         select count(1) from post_table where NAME=#{name}
+    </select>
+
+
+</mapper>

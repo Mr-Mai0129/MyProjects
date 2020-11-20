@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hr_manage.mapper.IFileMapper">
+
+    <insert id="add" parameterType="com.hr_manage.entity.File">
+        <selectKey keyProperty="id" keyColumn="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert  file_table(NAME,PATH) values (#{name},#{path})
+    </insert>
+
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete   from  file_table where id=#{id}
+    </delete>
+
+</mapper>

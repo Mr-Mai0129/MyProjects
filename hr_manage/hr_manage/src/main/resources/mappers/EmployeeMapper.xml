@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hr_manage.mapper.IEmployeeMapper">
+
+    <resultMap id="EmployeeResult" type="com.hr_manage.entity.Employee">
+        <id property="id" column="ID"></id>
+        <result property="name" column="NAME"></result>
+        <result property="sex" column="SEX"></result>
+        <result property="status" column="STATUS"></result>
+        <result property="departmentId" column="DID"></result>
+        <result property="postId" column="PID"></result>
+        <result property="phone" column="PHONE"></result>
+        <result property="age" column="AGE"></result>
+        <result property="address" column="ADDRESS"></result>
+        <result property="entryTime" column="ENTRY_TIME"></result>
+        <result property="fileId" column="FID"></result>
+    </resultMap>
+
+    <select id="listAll" resultMap="EmployeeResult">
+    SELECT e.*,
+    d.NAME AS departmentName,
+    p.NAME AS postName,
+    f.NAME AS fileName,f.PATH AS filePath
+    FROM  employee_table e
+          left OUTER JOIN department_table d ON d.ID = e.DID
+          left OUTER JOIN post_table p ON p.ID = e.PID
+          left OUTER JOIN file_table f ON f.ID = e.FID
+    </select>
+
+    <select id="selectTotal" resultType="java.lang.Integer">
+        select count(1) from  employee_table
+    </select>
+
+
+    <select id="findByCondition" resultMap="EmployeeResult">
+        SELECT e.*,
+        d.NAME AS departmentName,
+        p.NAME AS postName,
+        f.NAME AS fileName,f.PATH AS filePath
+        FROM  employee_table e
+        left OUTER JOIN department_table d ON d.ID = e.DID
+        left OUTER JOIN post_table p ON p.ID = e.PID
+        left OUTER JOIN file_table f ON f.ID = e.FID
+          where 1=1
+          <if test="id != null ">and e.ID=#{id}</if>
+          <if test="name != null and name != ''">and e.name=#{name}</if>
+          <if test="departmentId != null and departmentId != 0">and e.DID=#{departmentId}</if>
+          <if test="postId != null and postId != 0">and e.PID=#{postId}</if>
+        <if test="startIndex != null">LIMIT #{startIndex},10</if>
+    </select>
+
+    <select id="selectTotalByCondition" resultType="java.lang.Integer">
+        select count(1) from  employee_table
+        where 1=1
+        <if test="id != null ">and ID=#{id}</if>
+        <if test="name != null and name != ''">and name=#{name}</if>
+        <if test="departmentId != null and departmentId != 0">and DID=#{departmentId}</if>
+        <if test="postId != null and postId != 0">and PID=#{postId}</if>
+    </select>
+    
+    <delete id="delete" parameterType="java.lang.Integer">
+        delete from employee_table where id=#{id}
+    </delete>
+    
+    <update id="update" parameterType="com.hr_manage.entity.Employee">
+        update employee_table set  NAME=#{name},SEX=#{sex},STATUS=#{status},PID=#{postId},DID=#{departmentId},
+        PHONE=#{phone},AGE=#{age},ADDRESS=#{address},ENTRY_TIME=#{entryTime},FID=#{fileId}
+        where id=#{id}
+    </update>
+
+    <insert id="add" parameterType="com.hr_manage.entity.Employee">
+        <selectKey keyProperty="id" keyColumn="id" resultType="java.lang.Integer" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert  into employee_table(NAME,SEX,STATUS,PID,DID,PHONE,AGE,ADDRESS,ENTRY_TIME,FID)
+        values(#{name},#{sex},#{status},#{postId},#{departmentId},#{phone},#{age},#{address},#{entryTime},#{fileId})
+    </insert>
+    
+    <update id="updateFID" parameterType="java.lang.Integer">
+        update  employee_table set FID=null
+        where   FID=#{Fid}
+    </update>
+
+
+</mapper>
